@@ -35,19 +35,30 @@ const destionation = [
   },
 ];
 export default function Home() {
-  
   const [tours, setTours] = useState(destionation);
 
   const notInterested = (id) => {
     setTours((prev) => prev.filter((tour) => tour.id !== id));
   };
+  const Refresh = () => {
+    setTours(destionation);
+  };
 
   return (
-    <div className="flex flex-col mt-10 mb-10 ">
+    <div className="flex flex-col mt-10 mb-10 items-center">
       <h1 className="flex justify-center text-[40px] font-semibold">
         Our Tour
       </h1>
+
       <div className="mx-auto mt-3 h-1 w-24 bg-green-500 "></div>
+      {tours.length === 0 && (
+        <button
+          onClick={Refresh}
+          className="border-4 border-green-600 text-green-6006 w-20 h-10 mt-4"
+        >
+          Refresh
+        </button>
+      )}
       <div className="bg-white-200 h-screen grid grid-cols-3 gap-4 w-264  ml-auto mr-auto mt-8 items-stretch">
         {tours.map(({ id, image, def, text }) => (
           <Tour
@@ -64,14 +75,34 @@ export default function Home() {
   );
 }
 
-const Tour = ({id,image, def, text, onClick }) => {  
- 
+const Tour = ({ id, image, def, text, onClick }) => {
+  const [fullText, setFullText] = useState(false);
+
+  const readMore = () => {
+    setFullText(true);
+  };
+  const showLess = () => {
+    setFullText(false);
+  };
+
+  const newText = !fullText ? text?.slice(0, 300) : text;
+
   return (
     <div className="flex flex-col items-center gap-4 rounded-lg shadow-lg pb-8">
       <img className="bg-cover w-88 h-80" src={image} alt="pic" />
       <h2 className="font-semibold">{def}</h2>
-      <div className=" flex flex-col gap-10 w-88 items-center px-6">
-        <p className=" text-gray-500">{text}</p>
+      <div className=" flex flex-col gap-10 w-88 px-6">
+        <p className=" text-gray-500">{newText}</p>
+        {fullText ? (
+          <button onClick={showLess} className="text-green-500 font-bold w-25">
+            Show less
+          </button>
+        ) : (
+          <button onClick={readMore} className="text-green-500 font-bold w-25">
+            Read more
+          </button>
+        )}
+
         <button
           className="border-2 border-green-600 w-full text-green-6006"
           onClick={() => onClick(id)}
